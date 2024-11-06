@@ -1,10 +1,15 @@
 #include "otp.h"
 
-void convertToUpper(char *text, int size){
-    
-    for(int i = 0; i < size; i++)
-        text[i] = toupper(text[i]);
-
+void convertToUpper(char *text, int size) {
+    for (int i = 0; i < size; i++) {
+        if (text[i] >= 'a' && text[i] <= 'z') {
+            text[i] = toupper(text[i]);
+        }
+        // Ignora caracteres fora do intervalo de A-Z
+        else if (text[i] < 'A' || text[i] > 'Z') {
+            text[i] = ' ';  // substitui caracteres inválidos por espaço (opcional)
+        }
+    }
 }
 
 char *encryption(char * cltext, char * key, int key_size){
@@ -80,18 +85,16 @@ char *generateRandKey(int key_size) {
 }
 
 char *readEntry(const char *caminho) {
-    FILE *file = fopen(caminho, "r");  // Abre o arquivo em modo de leitura
+    FILE *file = fopen(caminho, "rb");  // Abre o arquivo em modo binário
     if (file == NULL) {
-        perror("Erro ao abrir o arquivo");  // Imprime uma mensagem de erro
+        perror("Erro ao abrir o arquivo");
         return NULL;
     }
 
-    // Move o ponteiro até o final do arquivo para determinar o tamanho
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
-    rewind(file);  // Volta o ponteiro ao início do arquivo
+    rewind(file);
 
-    // Aloca memória para o conteúdo do arquivo (+1 para o caractere nulo)
     char *buffer = malloc((fileSize + 1) * sizeof(char));
     if (buffer == NULL) {
         perror("Erro ao alocar memória");
@@ -99,12 +102,10 @@ char *readEntry(const char *caminho) {
         return NULL;
     }
 
-    // Lê o conteúdo do arquivo e armazena no buffer
     size_t bytesRead = fread(buffer, sizeof(char), fileSize, file);
-    buffer[bytesRead] = '\0';  // Adiciona o caractere nulo para terminar a string
+    buffer[bytesRead] = '\0';
+    fclose(file);
 
-    fclose(file);  // Fecha o arquivo
-
-    return buffer;  // Retorna o conteúdo do arquivo como uma string
+    return buffer;
 }
 

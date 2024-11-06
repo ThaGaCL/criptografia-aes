@@ -9,12 +9,12 @@ int main(int argc, char* argv[]){
     }
 
     const char *caminho = argv[1];
-    printf("Caminho: %s\n", caminho);
+    // printf("Caminho: %s\n", caminho);
 
     char *textoClaro = readEntry(caminho);
     
     int key_size = calcStringSize(textoClaro);
-    printf("Tamanho da String: %d\n", key_size);
+    // printf("Tamanho da String: %d\n", key_size);
 
     char *chave = generateRandKey(key_size);
     
@@ -26,11 +26,11 @@ int main(int argc, char* argv[]){
 
     printf("Encriptando ...\n");
     char *textoEncriptado = encryption(textoClaro, chave, key_size);
-    printf("Texto Cifrado: %s\n", textoEncriptado);
+    // printf("Texto Cifrado: %s\n", textoEncriptado);
 
-    printf("Decifrado ...\n");
+    // printf("Decifrado ...\n");
     char *textoDecifrado = decryption(textoEncriptado, chave, key_size);
-    printf("Texto Decifrado: %s\n", textoDecifrado);
+    // printf("Texto Decifrado: %s\n", textoDecifrado);
 
     return 0;
 }
