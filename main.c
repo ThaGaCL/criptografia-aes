@@ -1,11 +1,12 @@
 #include "otp/otp.h"
 #include "aes/aes.h"
 #include <time.h>
+#include <locale.h>
 
 int main(int argc, char* argv[])
 {
     srand(0);
-    
+    setlocale(LC_ALL,"Portuguese");
 
     if(argc < 2){
         printf("Uso correto ./opt <caminho/para/entrada.txt>");
@@ -18,8 +19,8 @@ int main(int argc, char* argv[])
     /// SETUP PARA O ONE TIME PAD
     int key_size = calcStringSize(textoClaro);
     char *chave = generateRandKey(key_size);    
-    convertToUpper(textoClaro, key_size);
-    convertToUpper(chave, key_size);
+    // convertToUpper(textoClaro, key_size);
+    // convertToUpper(chave, key_size);
 
 
     // DEPOIS ESSAS FUNÇÕES VÃO SER CHAMADAS PELO AES

@@ -1,7 +1,9 @@
 #include "otp.h"
+#include <locale.h>
 
 int main(int argc, char* argv[]){
     srand(0);
+    setlocale(LC_ALL, "Portuguese");
 
     if(argc < 2){
         printf("Uso correto ./opt <caminho/para/entrada.txt>");
@@ -18,8 +20,8 @@ int main(int argc, char* argv[]){
 
     char *chave = generateRandKey(key_size);
     
-    convertToUpper(textoClaro, key_size);
-    convertToUpper(chave, key_size);
+    // convertToUpper(textoClaro, key_size);
+    // convertToUpper(chave, key_size);
 
     // printf("Texto Claro: %s\nChave Aleatória Gerada: %s\n", textoClaro, chave);
 
@@ -30,7 +32,7 @@ int main(int argc, char* argv[]){
 
     // printf("Decifrado ...\n");
     char *textoDecifrado = decryption(textoEncriptado, chave, key_size);
-    // printf("Texto Decifrado: %s\n", textoDecifrado);
+    printf("Texto Decifrado: %s\n", textoDecifrado);
 
     return 0;
 }

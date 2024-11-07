@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
-#include <locale.h>
+#include <ctype.h>
+#include <time.h>
 
 char *encryption(char * cltext, char * key, int key_size);
 

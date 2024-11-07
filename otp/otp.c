@@ -12,74 +12,54 @@ void convertToUpper(char *text, int size) {
     }
 }
 
-char *encryption(char * cltext, char * key, int key_size){
-    char *encrypted = malloc(sizeof(char) * (key_size + 1));
-    int *cipher = malloc(sizeof(int) * (key_size));
-
-    for(int i = 0; i < key_size; i++){
-        cipher[i] = (cltext[i] - 'A') + (key[i] - 'A');
+// Função para criptografar byte a byte com XOR
+char *encryption(char *cltext, char *key, int text_size) {
+    char *encrypted = malloc(sizeof(char) * (text_size + 1));
+    if (encrypted == NULL) {
+        perror("Erro ao alocar memória para criptografia");
+        return NULL;
     }
 
-    for (int i = 0; i < key_size; i++) {
-        if (cipher[i] > 25) {
-            cipher[i] -= 26;
-        }
+    for (int i = 0; i < text_size; i++) {
+        encrypted[i] = cltext[i] ^ key[i % text_size];  // XOR byte a byte
     }
-
-    for (int i = 0; i < key_size; i++) {
-        encrypted[i] = cipher[i] + 'A';
-    }
-
-    encrypted[key_size] = '\0';
-
-    free(cipher);
+    encrypted[text_size] = '\0';
 
     return encrypted;
 }
 
-char *decryption(char *cphtext, char *key, int key_size) {
-    char *decrypted = malloc(sizeof(char) * (key_size + 1));
-    int *plain = malloc(sizeof(int) * key_size);
-
-    // Calcula os valores decifrados subtraindo a chave do texto cifrado
-    for (int i = 0; i < key_size; i++) {
-        plain[i] = (cphtext[i] - 'A') - (key[i] - 'A');
+// Função para descriptografar byte a byte com XOR
+char *decryption(char *cphtext, char *key, int text_size) {
+    char *decrypted = malloc(sizeof(char) * (text_size + 1));
+    if (decrypted == NULL) {
+        perror("Erro ao alocar memória para descriptografia");
+        return NULL;
     }
 
-    // Ajusta valores negativos para o intervalo [0, 25]
-    for (int i = 0; i < key_size; i++) {
-        if (plain[i] < 0) {
-            plain[i] += 26;
-        }
+    for (int i = 0; i < text_size; i++) {
+        decrypted[i] = cphtext[i] ^ key[i % text_size];  // XOR byte a byte
     }
-
-    // Converte os valores decifrados em caracteres e armazena na string decifrada
-    for (int i = 0; i < key_size; i++) {
-        decrypted[i] = plain[i] + 'A';
-    }
-
-    decrypted[key_size] = '\0';
-
-    free(plain);
+    decrypted[text_size] = '\0';
 
     return decrypted;
 }
+
 
 int calcStringSize(char *str){
     return strlen(str);
 }
 
+// Geração de uma chave aleatória de bytes
 char *generateRandKey(int key_size) {
-    char *randkey = malloc(sizeof(char) * (key_size + 1));  // Aloca espaço extra para o caractere nulo
-    if (randkey == NULL) {  // Verifica se a alocação foi bem-sucedida
+    char *randkey = malloc(sizeof(char) * (key_size + 1));
+    if (randkey == NULL) {
         return NULL;
     }
 
     for (int i = 0; i < key_size; i++) {
-        randkey[i] = (rand() % 26) + 'A';  // Gera um caractere aleatório de 'A' a 'Z'
+        randkey[i] = rand() % 256;  // Gera um byte aleatório (0 a 255)
     }
-
-    randkey[key_size] = '\0';  // Adiciona o caractere nulo no final da string
+    randkey[key_size] = '\0';
 
     return randkey;
 }
