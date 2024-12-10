@@ -14,12 +14,12 @@ int main(int argc, char* argv[]){
     // printf("Caminho: %s\n", caminho);
 
     char *textoClaro = readEntry(caminho);
-    
+
     int key_size = calcStringSize(textoClaro);
     // printf("Tamanho da String: %d\n", key_size);
 
     char *chave = generateRandKey(key_size);
-    
+
     // convertToUpper(textoClaro, key_size);
     // convertToUpper(chave, key_size);
 
@@ -27,11 +27,11 @@ int main(int argc, char* argv[]){
 
 
     printf("Encriptando ...\n");
-    char *textoEncriptado = encryption(textoClaro, chave, key_size);
+    char *textoEncriptado = otpEncryption(textoClaro, chave, key_size);
     // printf("Texto Cifrado: %s\n", textoEncriptado);
 
     // printf("Decifrado ...\n");
-    char *textoDecifrado = decryption(textoEncriptado, chave, key_size);
+    char *textoDecifrado = otpDecryption(textoEncriptado, chave, key_size);
     printf("Texto Decifrado: %s\n", textoDecifrado);
 
     return 0;

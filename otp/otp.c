@@ -13,7 +13,7 @@ void convertToUpper(char *text, int size) {
 }
 
 // Função para criptografar byte a byte com XOR
-char *encryption(char *cltext, char *key, int text_size) {
+char *otpEncryption(char *cltext, char *key, int text_size) {
     char *encrypted = malloc(sizeof(char) * (text_size + 1));
     if (encrypted == NULL) {
         perror("Erro ao alocar memória para criptografia");
@@ -29,7 +29,7 @@ char *encryption(char *cltext, char *key, int text_size) {
 }
 
 // Função para descriptografar byte a byte com XOR
-char *decryption(char *cphtext, char *key, int text_size) {
+char *otpDecryption(char *cphtext, char *key, int text_size) {
     char *decrypted = malloc(sizeof(char) * (text_size + 1));
     if (decrypted == NULL) {
         perror("Erro ao alocar memória para descriptografia");

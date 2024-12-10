@@ -2,6 +2,7 @@
     "files.associations": {
         "stdlib.h": "c",
         "otp.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "locale.h": "c"
     }
 }
