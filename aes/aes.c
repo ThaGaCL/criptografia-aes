@@ -7,7 +7,7 @@
 void rotWord(char *word) {
 
     char first_byte = word[0];
-    for (char i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         word[i] = word[i+1];
     }
     word[3] = first_byte;
@@ -19,7 +19,7 @@ void rotWord(char *word) {
 void subWord(char *word, char* otp_key) {
 
     char *textoCifrado = otpEncryption(word, otp_key, 4);
-    for (char i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         word[i] = textoCifrado[i];
     }
     free(textoCifrado);
@@ -28,7 +28,7 @@ void subWord(char *word, char* otp_key) {
 
 // atualiza valor da constante de rodada R[i], usada na expansão da chave
 // R[] deve ter sido inicializado com {, 0x00, 0x00, 0x00}
-void RCon_1(char i, char R[4]) {
+void RCon_1(int i, char R[4]) {
 
     R[0] = 0x01;
     if (i > 1) {
@@ -41,7 +41,7 @@ void RCon_1(char i, char R[4]) {
 }
 
 // tabela de valores pré-calculados para RCon (até 14 rodadas)
-static const char RConTableable[] = {
+const char RConTable[] = {
     0x00,  // RCon[0] não é usado
     0x01,  // x^(1-1) = 0000 0001
     0x02,  // x^(2-1) = 0000 0010
@@ -60,7 +60,7 @@ static const char RConTableable[] = {
 };
 
 // atualiza valor da constante de rodada R[i]
-void RCon(char i, char R[4]) {
+void RCon(int i, char R[4]) {
 
     R[0] = RConTable[i];
     R[1] = 0x00;
@@ -81,12 +81,12 @@ void RCon(char i, char R[4]) {
 // expande a chave para Nr rodadas além da adição inicial,
 // totalizando Nb*(Nr+1) palavras
 // w recebe a chave expandida
-void keyExpansion(char *key, char *w, char* otp_key) {
+void keyExpansion(unsigned char *key, char *w, char* otp_key) {
 
     char temp_word[4], R[4];
     char w_length = NB*(NR+1);
 
-    for (char i = 0; i < 4*NK; i++) {
+    for (int i = 0; i < 4*NK; i++) {
         w[i] = key[i];
     }
 
@@ -139,7 +139,7 @@ void subBytes(char *state, char *otp_key) {
     char *textoCifrado = otpEncryption(state, otp_key, 4*NB);
     for (char i = 0; i < 4; i++) {
         for (char j = 0; j < NB; j++) {
-            state[NB*i+j] = textoCifrado[NB*i*j];
+            state[NB*i+j] = textoCifrado[NB*i+j];
         }
     }
     free(textoCifrado);
@@ -152,7 +152,7 @@ void invSubBytes(char *state, char *otp_key) {
     char *textoDecifrado = otpDecryption(state, otp_key, 4*NB);
     for (char i = 0; i < 4; i++) {
         for (char j = 0; j < NB; j++) {
-            state[NB*i+j] = textoDecifrado[NB*i*j];
+            state[NB*i+j] = textoDecifrado[NB*i+j];
         }
     }
     free(textoDecifrado);
@@ -163,11 +163,11 @@ void shiftRows(char *state) {
 
     char buffer[4];
 
-    for (char r = 1; r < 4; r++) {
-        for (char c = 0; c < NB; c++) {
+    for (int r = 1; r < 4; r++) {
+        for (int c = 0; c < NB; c++) {
             buffer[c] = state[NB*r+((c+r)%NB)];
         }
-        for (char c = 0; c < NB; c++) {
+        for (int c = 0; c < NB; c++) {
             state[NB*r+c] = buffer[c];
         }
     }
@@ -179,11 +179,11 @@ void invShiftRows(char *state) {
 
     char buffer[4];
 
-    for (char r = 1; r < 4; r++) {
-        for (char c = 0; c < NB; c++) {
+    for (int r = 1; r < 4; r++) {
+        for (int c = 0; c < NB; c++) {
             buffer[(c+r)%NB] = state[NB*r+c];
         }
-        for (char c = 0; c < NB; c++) {
+        for (int c = 0; c < NB; c++) {
             state[NB*r+c] = buffer[c];
         }
     }
@@ -197,14 +197,14 @@ void mixColumns_1(char *state) {
     char a[] = {0x02, 0x01, 0x01, 0x03};
     char column[4], result[4];
 
-    for (char j = 0; j < NB; j++) {
-        for (char i = 0; i < 4; i++) {
+    for (int j = 0; j < NB; j++) {
+        for (int i = 0; i < 4; i++) {
             column[i] = state[NB*i+j];
         }
 
-        word_mult(a, column, result);
+        wordMult(a, column, result);
 
-        for (char i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             state[NB*i+j] = result[i];
         }
     }
@@ -258,15 +258,15 @@ void aesCipher(char* in, char* out, char *w, char* otp_key) {
 
     char* state = malloc(4*NB * sizeof(char));
 
-    for (char i = 0; i < 4; i++) {
-        for (char j = 0; j < NB; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < NB; j++) {
             state[NB*i+j] = in[i+4*j];
         }
     }
 
     addRoundKey(state, w, 0);
 
-    for (char r = 1; r < NR; r++) {
+    for (int r = 1; r < NR; r++) {
         subBytes(state, otp_key);
         shiftRows(state);
         mixColumns(state);
@@ -277,8 +277,8 @@ void aesCipher(char* in, char* out, char *w, char* otp_key) {
     shiftRows(state);
     addRoundKey(state, w, NR);
 
-    for (char i = 0; i < 4; i++) {
-        for (char j = 0; j < NB; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < NB; j++) {
             out[i+4*j] = state[NB*i+j];
         }
     }
@@ -290,15 +290,15 @@ void aesInvCipher(char* in, char* out, char *w, char* otp_key) {
 
     char* state = malloc(4*NB * sizeof(char));
 
-    for (char i = 0; i < 4; i++) {
-        for (char j = 0; j < NB; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < NB; j++) {
             state[NB*i+j] = in[i+4*j];
         }
     }
 
     addRoundKey(state, w, NR);
 
-    for (char r = NR-1; r >= 1; r--) {
+    for (int r = NR-1; r >= 1; r--) {
         invShiftRows(state);
         invSubBytes(state, otp_key);
         addRoundKey(state, w, r);
@@ -309,8 +309,8 @@ void aesInvCipher(char* in, char* out, char *w, char* otp_key) {
     invSubBytes(state, otp_key);
     addRoundKey(state, w, 0);
 
-    for (char i = 0; i < 4; i++) {
-        for (char j = 0; j < NB; j++) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < NB; j++) {
             out[i+4*j] = state[NB*i+j];
         }
     }

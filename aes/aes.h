@@ -15,9 +15,9 @@
 extern const char RConTable[];
 void rotWord(char *word);
 void subWord(char *word, char* otp_key);
-void RCon_1(char i, char R[4]);
-void RCon(char i, char R[4]);
-void keyExpansion(char *key, char *w, char* otp_key);
+void RCon_1(int i, char R[4]);
+void RCon(int i, char R[4]);
+void keyExpansion(unsigned char *key, char *w, char* otp_key);
 
 void addRoundKey(char *state, char *w, char round);
 
@@ -31,7 +31,7 @@ void mixColumns_1(char *state);
 void mixColumns(char *state);
 void invMixColumns(char *state);
 
-void aesCipher(char in[4*NB], char out[4*NB], char *w, char* otp_key);
-void aesInvCipher(char in[4*NB], char out[4*NB], char *w, char* otp_key);
+void aesCipher(char *in, char *out, char *w, char* otp_key);
+void aesInvCipher(char *in, char *out, char *w, char* otp_key);
 
 #endif
