@@ -1,19 +1,22 @@
 PROGS = aescomp
 CC = gcc
 CFLAGS = -g -Wall 
-objects = main.o aes.o otp.o
+objects = main.o aes.o otp.o gf.o
 
 all: $(objects)
 	$(CC) $(CFLAGS) -o $(PROGS) $(objects) 
 
-main.o: main.c aes/aes.h otp/otp.h
+main.o: main.c aes/aes.h aes/otp/otp.h
 	$(CC) $(CFLAGS) -c main.c
 
-aes.o: aes/aes.c aes/aes.h
+aes.o: aes/aes.c aes/aes.h aes/gf.h aes/otp/otp.h
 	$(CC) $(CFLAGS) -c aes/aes.c
 
-otp.o: otp/otp.c otp/otp.h
-	$(CC) $(CFLAGS) -c otp/otp.c
+gf.o: aes/gf.c aes/gf.h
+	$(CC) $(CFLAGS) -c aes/gf.c
+
+otp.o: aes/otp/otp.c aes/otp/otp.h
+	$(CC) $(CFLAGS) -c aes/otp/otp.c
 
 clean:
 	-rm -f *~ *.o

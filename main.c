@@ -1,5 +1,5 @@
-#include "otp/otp.h"
 #include "aes/aes.h"
+#include "aes/otp/otp.h"
 #include <time.h>
 #include <locale.h>
 
@@ -9,13 +9,30 @@ int main(int argc, char* argv[])
     setlocale(LC_ALL,"Portuguese");
 
     if(argc < 3){
-        printf("Uso correto ./opt <caminho/para/entrada.txt> <chave>\n");
+        printf("Uso correto ./opt <caminho/para/entrada.txt> <chave em hex>\n");
         return 0;
     }
+    
+    unsigned char chave[16];
+    size_t len = strlen(argv[2]);
+    if (len != NK*4*2) {
+        fprintf(stderr, "Erro: A chave deve ter 32 caracteres hexadecimais (128 bits).\n");
+        exit(EXIT_FAILURE);
+    }
+    unsigned int byte;
+    for (size_t i = 0; i < NK*4; i++) {
+        sscanf(argv[2] + 2 * i, "%2x", &byte);
+        chave[i] = (__uint8_t)byte;
+    }
+
+    printf("Chave convertida para vetor de bytes:\n");
+    for (int i = 0; i < 16; i++) {
+        printf("%02x ", chave[i]);
+    }
+    printf("\n");
 
     clock_t time_req;
     const char *caminho = argv[1];
-    const char *chave = argv[2];
     char *textoClaro = readEntry(caminho);
     int key_size = calcStringSize(textoClaro);
     char *textoCifrado = malloc(sizeof(char) * (key_size + 1));
@@ -46,6 +63,13 @@ int main(int argc, char* argv[])
     time_req = clock() - time_req;
     printf("Tempo gasto encriptando: %f\n",(float)time_req / CLOCKS_PER_SEC);
 
+    printf("texto cifrado:\n");
+    for (int i = 0; i < key_size; i++) {
+        printf("%c", textoCifrado[i]);
+    }
+    fwrite(textoCifrado, sizeof(char), key_size, stdin);
+    printf("\n");
+
     // DECIFRA COM AES + OTP
     time_req = clock();
     for (size_t block = 0; block < key_size/(NB*4); block++) {
@@ -61,6 +85,13 @@ int main(int argc, char* argv[])
     }
     time_req = clock() - time_req;
     printf("Tempo gasto decifrando: %f\n",(float)time_req / CLOCKS_PER_SEC);
+
+    printf("texto claro após decifrar:\n");
+    for (int i = 0; i < key_size; i++) {
+        printf("%c", textoClaro[i]);
+    }
+    fwrite(textoClaro, sizeof(char), key_size, stdin);
+    printf("\n");
 
     free(textoClaro);
     free(textoCifrado);
